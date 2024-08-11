@@ -11,7 +11,7 @@ object JwtConfig {
     private val issuer = System.getenv("JWT_ISSUER") ?: "http://0.0.0.0:8080/"
     private val audience = System.getenv("JWT_AUDIENCE") ?: "http://0.0.0.0:8080/hello"
     private val algorithm = Algorithm.HMAC512(secret)
-    private val validityInMs = System.getenv("JWT_VALIDITY_MS")?.toLong() ?: (36_000_00 * 10) // 10 horas
+    private val validityInMs = System.getenv("JWT_VALIDITY_MS")?.toLong() ?: (36_000_00) // 1 hora
 
     fun generateToken(user: User): String = JWT.create()
         .withSubject("Authentication")
