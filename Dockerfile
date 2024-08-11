@@ -5,7 +5,7 @@ FROM openjdk:11-jdk-slim
 WORKDIR /app
 
 # Copie o arquivo JAR do seu aplicativo para o container
-COPY build/libs/seu-aplicativo.jar /app/app.jar
+COPY build/libs/com.contas.padarias-0.0.1.jar /app/app.jar
 
 # Exponha a porta que seu aplicativo Ktor usa
 EXPOSE 8080
