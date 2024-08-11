@@ -3,8 +3,10 @@ package example.com.infrastructure.security
 import at.favre.lib.crypto.bcrypt.BCrypt
 
 object PasswordEncryption {
+    private const val BCRYPT_COST = 12
+
     fun hashPassword(password: String): String {
-        return BCrypt.withDefaults().hashToString(12, password.toCharArray())
+        return BCrypt.withDefaults().hashToString(BCRYPT_COST, password.toCharArray())
     }
 
     fun verifyPassword(password: String, hashedPassword: String): Boolean {

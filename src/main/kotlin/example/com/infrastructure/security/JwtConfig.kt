@@ -7,11 +7,11 @@ import example.com.domain.model.User
 import java.util.*
 
 object JwtConfig {
-    private const val secret = "your-secret-key"
-    private const val issuer = "http://0.0.0.0:8080/"
-    private const val audience = "http://0.0.0.0:8080/hello"
+    private val secret = System.getenv("JWT_SECRET") ?: throw IllegalStateException("JWT_SECRET não configurado")
+    private val issuer = System.getenv("JWT_ISSUER") ?: "http://0.0.0.0:8080/"
+    private val audience = System.getenv("JWT_AUDIENCE") ?: "http://0.0.0.0:8080/hello"
     private val algorithm = Algorithm.HMAC512(secret)
-    private const val validityInMs = 36_000_00 * 10 // 10 hours
+    private val validityInMs = System.getenv("JWT_VALIDITY_MS")?.toLong() ?: (36_000_00 * 10) // 10 horas
 
     fun generateToken(user: User): String = JWT.create()
         .withSubject("Authentication")

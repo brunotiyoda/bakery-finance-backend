@@ -9,11 +9,15 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
     fun init() {
+        val dbUrl = System.getenv("DB_URL") ?: "jdbc:postgresql://localhost:5432/padarias_db"
+        val dbUser = System.getenv("DB_USER") ?: "padaria"
+        val dbPassword = System.getenv("DB_PASSWORD") ?: throw IllegalStateException("DB_PASSWORD não configurado")
+
         Database.connect(
-            url = "jdbc:pgsql://localhost:5432/padarias_db",
+            url = dbUrl,
             driver = "org.postgresql.Driver",
-            user = "padaria",
-            password = "k8jVn%L^2\$)vcY<6"
+            user = dbUser,
+            password = dbPassword
         )
         transaction {
             SchemaUtils.create(
