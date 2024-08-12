@@ -7,8 +7,13 @@ import io.ktor.server.application.install
 import io.ktor.server.plugins.cors.routing.CORS
 
 fun Application.corsConfig() {
+
+    val allowedHosts = System.getenv("ALLOWED_HOSTS")?.split(",") ?: listOf("localhost:4200")
+
     install(CORS) {
-        allowHost("localhost:4200")
+        allowedHosts.forEach { hosts ->
+            allowHost(hosts)
+        }
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)
