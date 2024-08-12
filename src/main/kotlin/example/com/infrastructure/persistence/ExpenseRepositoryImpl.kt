@@ -26,17 +26,19 @@ class ExpenseRepositoryImpl : ExpenseRepository {
         }
     }
 
-    override suspend fun getAllExpenses(): List<Expense> {
+    override suspend fun getAllExpensesByDate(dateInformed: LocalDate): List<Expense> {
         return transaction {
-            ExpenseTable.selectAll().map {
-                Expense(
-                    id = it[ExpenseTable.id],
-                    date = it[ExpenseTable.date],
-                    value = it[ExpenseTable.value],
-                    description = it[ExpenseTable.description],
-                    registeredBy = it[ExpenseTable.registeredBy]
-                )
-            }
+            ExpenseTable.selectAll()
+                .where { ExpenseTable.date.date() eq dateInformed }
+                .map {
+                    Expense(
+                        id = it[ExpenseTable.id],
+                        date = it[ExpenseTable.date],
+                        value = it[ExpenseTable.value],
+                        description = it[ExpenseTable.description],
+                        registeredBy = it[ExpenseTable.registeredBy]
+                    )
+                }
         }
     }
 
