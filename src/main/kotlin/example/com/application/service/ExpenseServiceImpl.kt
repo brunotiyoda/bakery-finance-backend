@@ -36,8 +36,9 @@ class ExpenseServiceImpl(
         repository.create(listOfExpense)
     }
 
-    override suspend fun getAllExpenses(): List<Expense> {
-        return repository.getAllExpenses()
+    override suspend fun getAllExpensesByDate(date: String): List<Expense> {
+        val dateInformed = LocalDate.parse(date)
+        return repository.getAllExpensesByDate(dateInformed)
     }
 
     override suspend fun getSumOfAllExpensesByDate(date: String): BigDecimal {

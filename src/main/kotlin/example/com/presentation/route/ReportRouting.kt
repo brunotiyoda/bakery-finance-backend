@@ -1,7 +1,9 @@
 package example.com.presentation.route
 
+import example.com.domain.service.ExpenseService
 import example.com.domain.service.ReportService
 import example.com.presentation.route.responses.DailyTotalResponse
+import example.com.presentation.route.responses.ExpenseResponse
 import example.com.presentation.route.responses.MonthlyTotalResponse
 import example.com.presentation.route.responses.PeriodReportResponse
 import example.com.utils.authenticatedAdmin
@@ -15,9 +17,13 @@ import io.ktor.server.routing.route
 import kotlinx.datetime.LocalDate
 import org.koin.ktor.ext.inject
 
+private const val DATE_IS_REQUIRED = "Date is required"
+
 fun Routing.reportRouting() {
 
     val service by inject<ReportService>()
+    val expenseService by inject<ExpenseService>()
+
 
     route("/api") {
         authenticate("auth-jwt") {
@@ -26,7 +32,7 @@ fun Routing.reportRouting() {
                     authenticatedAdmin {
                         val date = call.parameters["date"] ?: return@authenticatedAdmin call.respond(
                             HttpStatusCode.BadRequest,
-                            "Date is required"
+                            DATE_IS_REQUIRED
                         )
                         val totalDaily = service.dailyTotal(date)
                         val response = DailyTotalResponse(
@@ -42,7 +48,7 @@ fun Routing.reportRouting() {
                     authenticatedAdmin {
                         val date = call.parameters["date"] ?: return@authenticatedAdmin call.respond(
                             HttpStatusCode.BadRequest,
-                            "Date is required"
+                            DATE_IS_REQUIRED
                         )
                         val response = service.getSumOfRevenuesByRegistrarAndDate(date)
                         call.respond(response)
@@ -82,6 +88,27 @@ fun Routing.reportRouting() {
                             expense = totalMonthly.expenses.toDouble(),
                             netBalance = totalMonthly.netBalance.toDouble()
                         )
+                        call.respond(response)
+                    }
+                }
+
+                get("/expenses/{date}") {
+                    authenticatedAdmin {
+                        val date = call.parameters["date"] ?: return@authenticatedAdmin call.respond(
+                            HttpStatusCode.BadRequest,
+                            DATE_IS_REQUIRED
+                        )
+
+                        val expenses = expenseService.getAllExpensesByDate(date)
+                        val response = expenses.map { expense ->
+                            ExpenseResponse(
+                                expense.id,
+                                expense.date,
+                                expense.value.toDouble(),
+                                expense.description,
+                                expense.registeredBy
+                            )
+                        }
                         call.respond(response)
                     }
                 }
