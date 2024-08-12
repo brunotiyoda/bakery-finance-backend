@@ -6,21 +6,20 @@ import example.com.presentation.route.responses.MonthlyTotalResponse
 import example.com.presentation.route.responses.PeriodReportResponse
 import example.com.utils.authenticatedAdmin
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.response.respond
+import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
-import io.ktor.server.routing.routing
 import kotlinx.datetime.LocalDate
 import org.koin.ktor.ext.inject
 
-fun Application.reportRouting() {
+fun Routing.reportRouting() {
 
     val service by inject<ReportService>()
 
-    routing {
+    route("/api") {
         authenticate("auth-jwt") {
             route("/reports") {
                 get("/daily/total/{date}") {

@@ -1,25 +1,25 @@
 package example.com.presentation.route
 
-import example.com.infrastructure.security.PasswordEncryption
 import example.com.domain.model.User
 import example.com.infrastructure.persistence.UserRepositoryImpl
+import example.com.infrastructure.security.PasswordEncryption
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
+import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
-import io.ktor.server.routing.routing
+import io.ktor.server.routing.route
 
-fun Application.userRouting() {
+fun Routing.userRouting() {
 
     val userRepositoryImpl = UserRepositoryImpl()
 
-    routing {
+    route("/api") {
         post("/register") {
             val user = call.receive<User>()
             val hashedPassword = PasswordEncryption.hashPassword(user.password)
