@@ -5,6 +5,9 @@ val exposed_version: String by project
 val h2_version: String by project
 val koin_version: String by project
 val postgres_version: String by project
+val postgres_driver_version: String by project
+val bcrypt_version: String by project
+val mockk_version: String by project
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -35,11 +38,12 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jvm")
     implementation("io.ktor:ktor-server-auth-jwt-jvm")
     implementation("io.ktor:ktor-server-cors-jvm")
+    implementation("io.ktor:ktor-server-rate-limit")
 
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
 
     implementation("org.postgresql:postgresql:$postgres_version")
-    implementation("com.impossibl.pgjdbc-ng:pgjdbc-ng:0.8.9")
+    implementation("com.impossibl.pgjdbc-ng:pgjdbc-ng:$postgres_driver_version")
 
     implementation("software.amazon.awssdk:auth:$awssdk_version")
     implementation("software.amazon.awssdk:core:$awssdk_version")
@@ -56,12 +60,12 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-core:$koin_version")
 
-    implementation("at.favre.lib:bcrypt:0.10.2")
+    implementation("at.favre.lib:bcrypt:$bcrypt_version")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    testImplementation("io.mockk:mockk:1.13.12")
+    testImplementation("io.mockk:mockk:$mockk_version")
 
 }
