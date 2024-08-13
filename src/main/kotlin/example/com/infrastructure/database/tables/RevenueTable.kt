@@ -3,7 +3,7 @@ package example.com.infrastructure.database.tables
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
-object RevenueTable : Table() {
+object RevenueTable : Table(name = "revenues") {
     val id = integer("id").autoIncrement()
 
     val date = datetime("data")
