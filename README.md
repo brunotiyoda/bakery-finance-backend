@@ -1,4 +1,4 @@
-# Projeto Padaria
+# Bakery Finance
 
 Este é um sistema de gerenciamento para padarias, desenvolvido utilizando Kotlin e o framework Ktor. O projeto segue os princípios do Domain-Driven Design (DDD) e oferece funcionalidades como autenticação, gerenciamento de receitas e despesas, e geração de relatórios.
 
