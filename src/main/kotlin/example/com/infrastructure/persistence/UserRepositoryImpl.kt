@@ -1,7 +1,7 @@
 package example.com.infrastructure.persistence
 
-import example.com.domain.repository.UserRepository
 import example.com.domain.model.User
+import example.com.domain.repository.UserRepository
 import example.com.infrastructure.database.tables.UserTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserRepositoryImpl : UserRepository {
-    fun create(user: User): User? = transaction {
+    override suspend fun create(user: User): User? = transaction {
         val insertStatement = UserTable.insert {
             it[username] = user.username
             it[password] = user.password

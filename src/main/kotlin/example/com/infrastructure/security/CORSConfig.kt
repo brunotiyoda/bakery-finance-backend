@@ -14,6 +14,7 @@ fun Application.corsConfig() {
         allowedHosts.forEach { hosts ->
             allowHost(hosts)
         }
+        allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)

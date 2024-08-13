@@ -11,11 +11,12 @@ import io.ktor.server.application.Application
 import io.ktor.server.netty.EngineMain.main
 
 fun main(args: Array<String>) {
-    DatabaseFactory.init()
     main(args)
 }
 
 fun Application.module() {
+    DatabaseFactory.init()
+
     koin()
     serialization()
 
