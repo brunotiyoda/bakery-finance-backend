@@ -31,3 +31,6 @@ EXPOSE 8080
 
 # Comando para executar o aplicativo
 CMD ["java", "-jar", "/app/app.jar"]
+
+# docker build -t bakery-finance-backend .
+# docker run -p 8080:8080 --env-file .env -d --network bakery-finance-network --name bakery-finance-backend  bakery-finance-backend

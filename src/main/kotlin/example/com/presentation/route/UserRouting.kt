@@ -11,7 +11,6 @@ import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Routing
-import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 
@@ -44,22 +43,6 @@ fun Routing.userRouting() {
                     } ?: call.respond(HttpStatusCode.BadRequest, "Failed to create user")
                 } else {
                     call.respond(HttpStatusCode.Forbidden, "Only admin can create users")
-                }
-            }
-
-            get("/all") {
-                val principal = call.principal<JWTPrincipal>()
-                val userRole = principal?.payload?.getClaim("role")?.asString()
-
-                when (userRole) {
-                    "admin", "user" -> {
-                        // Implementar lógica para buscar todos os usuários
-                        call.respond(HttpStatusCode.OK, "List of all users")
-                    }
-
-                    else -> {
-                        call.respond(HttpStatusCode.Forbidden, "Only admin or users can view all users")
-                    }
                 }
             }
         }
