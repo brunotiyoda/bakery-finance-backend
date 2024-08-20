@@ -10,43 +10,41 @@ import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
-import io.ktor.server.routing.Routing
+import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import org.koin.ktor.ext.inject
 
-fun Routing.revenueRouting() {
+fun Route.revenueRouting() {
 
     val service by inject<RevenueService>()
 
-    route("/api") {
-        route("/revenues") {
-            authenticate("auth-jwt") {
-                get {
-                    authenticatedAdmin {
-                        val revenues = service.getAllRevenues()
-                        val response = revenues.map { revenue ->
-                            RevenueResponse(
-                                revenue.id,
-                                revenue.date,
-                                revenue.money.toDouble(),
-                                revenue.card.toDouble(),
-                                revenue.pix.toDouble(),
-                                revenue.voucher.toDouble(),
-                                revenue.registeredBy
-                            )
-                        }
-                        call.respond(response)
+    route("/revenues") {
+        authenticate("auth-jwt") {
+            get {
+                authenticatedAdmin {
+                    val revenues = service.getAllRevenues()
+                    val response = revenues.map { revenue ->
+                        RevenueResponse(
+                            revenue.id,
+                            revenue.date,
+                            revenue.money.toDouble(),
+                            revenue.card.toDouble(),
+                            revenue.pix.toDouble(),
+                            revenue.voucher.toDouble(),
+                            revenue.registeredBy
+                        )
                     }
+                    call.respond(response)
                 }
+            }
 
-                post {
-                    authenticatedUser { username ->
-                        val request = call.receive<RevenueRequest>()
-                        service.createRevenue(request, username)
-                        call.respond(HttpStatusCode.Created, request)
-                    }
+            post {
+                authenticatedUser { username ->
+                    val request = call.receive<RevenueRequest>()
+                    service.createRevenue(request, username)
+                    call.respond(HttpStatusCode.Created, request)
                 }
             }
         }
