@@ -1,9 +1,10 @@
 package example.com.infrastructure.persistence
 
+import example.com.domain.model.Money
 import example.com.domain.model.Revenue
+import example.com.domain.model.RevenueSummary
 import example.com.domain.repository.RevenueRepository
 import example.com.infrastructure.database.tables.RevenueTable
-import example.com.domain.model.RevenueSummary
 import example.com.presentation.route.responses.RevenueSummaryByRegistrarResponse
 import kotlinx.datetime.LocalDate
 import org.jetbrains.exposed.sql.and
@@ -11,7 +12,6 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.kotlin.datetime.date
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.math.BigDecimal
 
 class RevenueRepositoryImpl : RevenueRepository {
 
@@ -19,10 +19,10 @@ class RevenueRepositoryImpl : RevenueRepository {
         transaction {
             RevenueTable.insert {
                 it[date] = revenue.date
-                it[totalCashAmount] = revenue.money
-                it[totalCardAmount] = revenue.card
-                it[totalPixAmount] = revenue.pix
-                it[totalVoucherAmount] = revenue.voucher
+                it[totalCashAmount] = revenue.money.amount
+                it[totalCardAmount] = revenue.card.amount
+                it[totalPixAmount] = revenue.pix.amount
+                it[totalVoucherAmount] = revenue.voucher.amount
                 it[registeredBy] = revenue.registeredBy
             }
         }
@@ -31,37 +31,30 @@ class RevenueRepositoryImpl : RevenueRepository {
     override suspend fun getAllRevenues(): List<Revenue> {
         return transaction {
             RevenueTable.selectAll().map {
-                Revenue(
+                Revenue.reconstitute(
                     id = it[RevenueTable.id],
                     date = it[RevenueTable.date],
-                    money = it[RevenueTable.totalCashAmount],
-                    card = it[RevenueTable.totalCardAmount],
-                    pix = it[RevenueTable.totalPixAmount],
-                    voucher = it[RevenueTable.totalVoucherAmount],
+                    money = Money(it[RevenueTable.totalCashAmount]),
+                    card = Money(it[RevenueTable.totalCardAmount]),
+                    pix = Money(it[RevenueTable.totalPixAmount]),
+                    voucher = Money(it[RevenueTable.totalVoucherAmount]),
                     registeredBy = it[RevenueTable.registeredBy]
                 )
             }
         }
     }
 
-    override suspend fun getSumOfAllRevenuesByDate(date: LocalDate) =
+    override suspend fun getSumOfAllRevenuesByDate(date: LocalDate): Money =
         transaction {
             val sumOf = RevenueTable.selectAll()
                 .where { RevenueTable.date.date() eq date }
-                .map {
-                    Revenue(
-                        id = it[RevenueTable.id],
-                        date = it[RevenueTable.date],
-                        money = it[RevenueTable.totalCashAmount],
-                        card = it[RevenueTable.totalCardAmount],
-                        pix = it[RevenueTable.totalPixAmount],
-                        voucher = it[RevenueTable.totalVoucherAmount],
-                        registeredBy = it[RevenueTable.registeredBy]
-                    )
-                }.sumOf { revenue ->
-                    revenue.pix + revenue.card + revenue.money + revenue.voucher
+                .sumOf {
+                    it[RevenueTable.totalCashAmount] +
+                            it[RevenueTable.totalCardAmount] +
+                            it[RevenueTable.totalPixAmount] +
+                            it[RevenueTable.totalVoucherAmount]
                 }
-            return@transaction sumOf
+            Money(sumOf)
         }
 
     override suspend fun getSumOfRevenuesByRegistrarAndDate(date: LocalDate): RevenueSummaryByRegistrarResponse {
@@ -87,24 +80,17 @@ class RevenueRepositoryImpl : RevenueRepository {
         }
     }
 
-    override suspend fun getSumOfAllRevenuesByPeriod(startDate: LocalDate, endDate: LocalDate): BigDecimal {
+    override suspend fun getSumOfAllRevenuesByPeriod(startDate: LocalDate, endDate: LocalDate): Money {
         return transaction {
-            RevenueTable.selectAll()
+            val sum = RevenueTable.selectAll()
                 .where { (RevenueTable.date.date() greaterEq startDate) and (RevenueTable.date.date() lessEq endDate) }
-                .map {
-                    Revenue(
-                        id = it[RevenueTable.id],
-                        date = it[RevenueTable.date],
-                        money = it[RevenueTable.totalCashAmount],
-                        card = it[RevenueTable.totalCardAmount],
-                        pix = it[RevenueTable.totalPixAmount],
-                        voucher = it[RevenueTable.totalVoucherAmount],
-                        registeredBy = it[RevenueTable.registeredBy]
-                    )
+                .sumOf {
+                    it[RevenueTable.totalCashAmount] +
+                            it[RevenueTable.totalCardAmount] +
+                            it[RevenueTable.totalPixAmount] +
+                            it[RevenueTable.totalVoucherAmount]
                 }
-                .sumOf { revenue ->
-                    revenue.money + revenue.card + revenue.pix + revenue.voucher
-                }
+            Money(sum)
         }
     }
 }

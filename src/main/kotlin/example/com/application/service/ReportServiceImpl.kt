@@ -25,9 +25,9 @@ class ReportServiceImpl(
         val expenses = expenseService.getSumOfAllExpensesByDate(date)
 
         val dailyTotal = DailyTotal(
-            revenues = revenues,
+            revenues = revenues.amount,
             expenses = expenses,
-            netBalance = revenues - expenses
+            netBalance = revenues.amount - expenses
         )
 
         return dailyTotal
@@ -46,11 +46,11 @@ class ReportServiceImpl(
         while (currentDate <= endDate) {
             val dailyRevenue = revenueService.getSumOfAllRevenuesByDate(currentDate.toString())
             val dailyExpense = expenseService.getSumOfAllExpensesByDate(currentDate.toString())
-            val dailyNetBalance = dailyRevenue - dailyExpense
+            val dailyNetBalance = dailyRevenue.amount - dailyExpense
 
-            dailyReports.add(DailyReportItem(currentDate, dailyRevenue, dailyExpense, dailyNetBalance))
+            dailyReports.add(DailyReportItem(currentDate, dailyRevenue.amount, dailyExpense, dailyNetBalance))
 
-            totalRevenue += dailyRevenue
+            totalRevenue += dailyRevenue.amount
             totalExpense += dailyExpense
 
             currentDate = currentDate.plus(DatePeriod(days = 1))
@@ -69,9 +69,9 @@ class ReportServiceImpl(
         val expenses = expenseService.getSumOfAllExpensesByPeriod(startDate.toString(), endDate.toString())
 
         return MonthlyTotal(
-            revenues = revenues,
+            revenues = revenues.amount,
             expenses = expenses,
-            netBalance = revenues - expenses
+            netBalance = revenues.amount - expenses
         )
     }
 }

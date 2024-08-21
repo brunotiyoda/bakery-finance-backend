@@ -1,35 +1,19 @@
 package example.com.application.service
 
+import example.com.domain.model.Money
 import example.com.domain.model.Revenue
 import example.com.domain.repository.RevenueRepository
 import example.com.domain.service.RevenueService
 import example.com.presentation.route.requests.RevenueRequest
 import example.com.presentation.route.responses.RevenueSummaryByRegistrarResponse
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import java.math.BigDecimal
 
 class RevenueServiceImpl(
     private val repository: RevenueRepository
 ) : RevenueService {
 
-    override suspend fun createRevenue(request: RevenueRequest, username: String) {
-        val currentMoment: Instant = Clock.System.now()
-        val today: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.of("America/Sao_Paulo"))
-
-        val revenue = Revenue(
-            date = today,
-            money = request.totalCashAmount.toBigDecimal(),
-            card = request.totalCardAmount.toBigDecimal(),
-            pix = request.totalPixAmount.toBigDecimal(),
-            voucher = request.totalVoucherAmount.toBigDecimal(),
-            registeredBy = username
-        )
-
+    override suspend fun create(request: RevenueRequest, username: String) {
+        val revenue = Revenue.create(request, username)
         repository.create(revenue)
     }
 
@@ -37,7 +21,7 @@ class RevenueServiceImpl(
         return repository.getAllRevenues()
     }
 
-    override suspend fun getSumOfAllRevenuesByDate(date: String): BigDecimal {
+    override suspend fun getSumOfAllRevenuesByDate(date: String): Money {
         val localDate = LocalDate.parse(date)
         return repository.getSumOfAllRevenuesByDate(localDate)
     }
@@ -47,13 +31,9 @@ class RevenueServiceImpl(
         return repository.getSumOfRevenuesByRegistrarAndDate(localDate)
     }
 
-    override suspend fun getSumOfAllRevenuesByPeriod(startDate: String, endDate: String): BigDecimal {
+    override suspend fun getSumOfAllRevenuesByPeriod(startDate: String, endDate: String): Money {
         val start = LocalDate.parse(startDate)
         val end = LocalDate.parse(endDate)
         return repository.getSumOfAllRevenuesByPeriod(start, end)
-    }
-
-    override suspend fun getSumOfAllRevenuesByDateRange(startDate: LocalDate, endDate: LocalDate): BigDecimal {
-        TODO("Not yet implemented")
     }
 }

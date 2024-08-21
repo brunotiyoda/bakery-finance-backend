@@ -1,6 +1,7 @@
 package example.com.application.service
 
 import example.com.domain.model.DailyReportItem
+import example.com.domain.model.Money
 import example.com.domain.model.PeriodReport
 import example.com.domain.service.ExpenseService
 import example.com.domain.service.RevenueService
@@ -33,9 +34,9 @@ class ReportServiceImplTest {
         val endDate = LocalDate(2024, 8, 12)
 
         val dailyRevenues = listOf(
-            BigDecimal("100.00"),
-            BigDecimal("150.00"),
-            BigDecimal("200.00")
+            Money(BigDecimal("100.00")),
+            Money(BigDecimal("150.00")),
+            Money(BigDecimal("200.00"))
         )
 
         val dailyExpenses = listOf(

@@ -29,10 +29,10 @@ fun Route.revenueRouting() {
                         RevenueResponse(
                             revenue.id,
                             revenue.date,
-                            revenue.money.toDouble(),
-                            revenue.card.toDouble(),
-                            revenue.pix.toDouble(),
-                            revenue.voucher.toDouble(),
+                            revenue.money.amount.toDouble(),
+                            revenue.card.amount.toDouble(),
+                            revenue.pix.amount.toDouble(),
+                            revenue.voucher.amount.toDouble(),
                             revenue.registeredBy
                         )
                     }
@@ -43,7 +43,7 @@ fun Route.revenueRouting() {
             post {
                 authenticatedUser { username ->
                     val request = call.receive<RevenueRequest>()
-                    service.createRevenue(request, username)
+                    service.create(request, username)
                     call.respond(HttpStatusCode.Created, request)
                 }
             }
