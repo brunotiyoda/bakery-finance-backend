@@ -28,7 +28,7 @@ class ReportServiceImplTest {
 
     @Test
     fun `getPeriodReport should return correct PeriodReport for given date range`() = runBlocking {
-        // Arrange
+
         val startDate = LocalDate(2024, 8, 10)
         val endDate = LocalDate(2024, 8, 12)
 
@@ -60,14 +60,27 @@ class ReportServiceImplTest {
             } returns expense
         }
 
-        // Act
         val result = reportService.getPeriodReport(startDate, endDate)
 
-        // Assert
         val expectedDailyReports = listOf(
-            DailyReportItem(LocalDate(2024, 8, 10), BigDecimal("100.00"), BigDecimal("50.00"), BigDecimal("50.00")),
-            DailyReportItem(LocalDate(2024, 8, 11), BigDecimal("150.00"), BigDecimal("75.00"), BigDecimal("75.00")),
-            DailyReportItem(LocalDate(2024, 8, 12), BigDecimal("200.00"), BigDecimal("100.00"), BigDecimal("100.00"))
+            DailyReportItem(
+                LocalDate(2024, 8, 10),
+                BigDecimal("100.00"),
+                BigDecimal("50.00"),
+                BigDecimal("50.00")
+            ),
+            DailyReportItem(
+                LocalDate(2024, 8, 11),
+                BigDecimal("150.00"),
+                BigDecimal("75.00"),
+                BigDecimal("75.00")
+            ),
+            DailyReportItem(
+                LocalDate(2024, 8, 12),
+                BigDecimal("200.00"),
+                BigDecimal("100.00"),
+                BigDecimal("100.00")
+            )
         )
 
         val expectedPeriodReport = PeriodReport(
@@ -84,14 +97,12 @@ class ReportServiceImplTest {
 
     @Test
     fun `getPeriodReport should return empty report when start date is after end date`() = runBlocking {
-        // Arrange
+
         val startDate = LocalDate(2024, 8, 12)
         val endDate = LocalDate(2024, 8, 10)
 
-        // Act
         val result = reportService.getPeriodReport(startDate, endDate)
 
-        // Assert
         val expectedPeriodReport = PeriodReport(
             startDate = startDate,
             endDate = endDate,
