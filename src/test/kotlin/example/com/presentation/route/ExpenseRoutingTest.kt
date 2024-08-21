@@ -18,7 +18,7 @@ import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ExpenseApiTest {
+class ExpenseRoutingTest {
 
     private fun createTestToken(): String {
         val secret = System.getenv("JWT_SECRET") ?: throw IllegalStateException("JWT_SECRET não configurado")
