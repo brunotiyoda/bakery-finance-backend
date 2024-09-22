@@ -25,7 +25,7 @@ class RevenueTest {
         assertNotNull(revenue)
         assertEquals(0, revenue.id)
         assertTrue(
-            revenue.date.toInstant(TimeZone.of("America/Sao_Paulo")).minus(Clock.System.now()) < Duration.parse("1s")
+            revenue.registrationDate.toInstant(TimeZone.of("America/Sao_Paulo")).minus(Clock.System.now()) < Duration.parse("1s")
         )
         assertEquals(Money(BigDecimal("100.0")), revenue.money)
         assertEquals(Money(BigDecimal("200.0")), revenue.card)
@@ -49,7 +49,7 @@ class RevenueTest {
 
         assertNotNull(revenue)
         assertEquals(id, revenue.id)
-        assertEquals(date, revenue.date)
+        assertEquals(date, revenue.registrationDate)
         assertEquals(money, revenue.money)
         assertEquals(card, revenue.card)
         assertEquals(pix, revenue.pix)

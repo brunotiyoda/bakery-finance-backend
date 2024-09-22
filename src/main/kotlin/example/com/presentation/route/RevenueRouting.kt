@@ -2,6 +2,7 @@ package example.com.presentation.route
 
 import example.com.domain.service.RevenueService
 import example.com.presentation.route.requests.RevenueRequest
+import example.com.presentation.route.requests.RevenueRequestList
 import example.com.presentation.route.responses.RevenueResponse
 import example.com.utils.authenticatedAdmin
 import example.com.utils.authenticatedUser
@@ -27,13 +28,12 @@ fun Route.revenueRouting() {
                     val revenues = service.getAllRevenues()
                     val response = revenues.map { revenue ->
                         RevenueResponse(
-                            revenue.id,
-                            revenue.date,
-                            revenue.money.amount.toDouble(),
-                            revenue.card.amount.toDouble(),
-                            revenue.pix.amount.toDouble(),
-                            revenue.voucher.amount.toDouble(),
-                            revenue.registeredBy
+                            id = revenue.id,
+                            registrationDate = revenue.registrationDate,
+                            revenueDate = revenue.revenueDate,
+                            value = revenue.value.amount.toDouble(),
+                            category = revenue.category,
+                            registeredBy = revenue.registeredBy
                         )
                     }
                     call.respond(response)
@@ -42,9 +42,18 @@ fun Route.revenueRouting() {
 
             post {
                 authenticatedUser { username ->
-                    val request = call.receive<RevenueRequest>()
-                    service.create(request, username)
-                    call.respond(HttpStatusCode.Created, request)
+                    val request = call.receive<RevenueRequestList>()
+                    val createdRevenues = service.create(request.revenues, username)
+                    call.respond(HttpStatusCode.Created, createdRevenues.map { revenue ->
+                        RevenueResponse(
+                            id = revenue.id,
+                            registrationDate = revenue.registrationDate,
+                            revenueDate = revenue.revenueDate,
+                            value = revenue.value.amount.toDouble(),
+                            category = revenue.category,
+                            registeredBy = revenue.registeredBy
+                        )
+                    })
                 }
             }
         }

@@ -2,8 +2,10 @@ package example.com.application.service
 
 import example.com.domain.model.DailyReportItem
 import example.com.domain.model.DailyTotal
+import example.com.domain.model.Money
 import example.com.domain.model.MonthlyTotal
 import example.com.domain.model.PeriodReport
+import example.com.domain.model.RevenueCategory
 import example.com.domain.service.ExpenseService
 import example.com.domain.service.ReportService
 import example.com.domain.service.RevenueService
@@ -33,7 +35,7 @@ class ReportServiceImpl(
         return dailyTotal
     }
 
-    override suspend fun getSumOfRevenuesByRegistrarAndDate(date: String): RevenueSummaryByRegistrarResponse {
+    override suspend fun getSumOfRevenuesByRegistrarAndDate(date: String): Map<String, Map<RevenueCategory, Money>> {
         return revenueService.getSumOfRevenuesByRegistrarAndDate(date)
     }
 

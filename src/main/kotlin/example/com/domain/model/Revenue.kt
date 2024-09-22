@@ -1,64 +1,57 @@
 package example.com.domain.model
 
-import example.com.presentation.route.requests.RevenueRequest
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 class Revenue private constructor(
     override val id: Int,
-    val date: LocalDateTime,
-    val money: Money,
-    val card: Money,
-    val pix: Money,
-    val voucher: Money,
+    val registrationDate: LocalDateTime,
+    val revenueDate: LocalDate,
+    val value: Money,
+    val category: RevenueCategory,
     val registeredBy: String
 ) : Entity<Int>() {
 
     companion object {
         fun create(
-            request: RevenueRequest,
-            username: String
+            revenueDate: LocalDate?,
+            value: Money,
+            category: RevenueCategory,
+            registeredBy: String
         ): Revenue {
-            val currentMoment: Instant = Clock.System.now()
-            val today: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.of("America/Sao_Paulo"))
+            val now = Clock.System.now()
+            val registrationDateTime = now.toLocalDateTime(TimeZone.of("America/Sao_Paulo"))
+            val effectiveRevenueDate = revenueDate ?: registrationDateTime.date
 
             return Revenue(
                 id = 0, // Assumindo que o ID será gerado pelo banco de dados
-                date = today,
-                money = Money(request.totalCashAmount.toBigDecimal()),
-                card = Money(request.totalCardAmount.toBigDecimal()),
-                pix = Money(request.totalPixAmount.toBigDecimal()),
-                voucher = Money(request.totalVoucherAmount.toBigDecimal()),
-                registeredBy = username
+                registrationDate = registrationDateTime,
+                revenueDate = effectiveRevenueDate,
+                value = value,
+                category = category,
+                registeredBy = registeredBy
             )
         }
 
         fun reconstitute(
             id: Int,
-            date: LocalDateTime,
-            money: Money,
-            card: Money,
-            pix: Money,
-            voucher: Money,
+            registrationDate: LocalDateTime,
+            revenueDate: LocalDate,
+            value: Money,
+            category: RevenueCategory,
             registeredBy: String
         ): Revenue {
             return Revenue(
                 id = id,
-                date = date,
-                money = money,
-                card = card,
-                pix = pix,
-                voucher = voucher,
+                registrationDate = registrationDate,
+                revenueDate = revenueDate,
+                value = value,
+                category = category,
                 registeredBy = registeredBy
             )
         }
     }
-
-    val total: Money
-        get() = money + card + pix + voucher
-
-
 }

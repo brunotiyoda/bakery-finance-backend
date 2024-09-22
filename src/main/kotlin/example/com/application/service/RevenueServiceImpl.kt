@@ -2,6 +2,7 @@ package example.com.application.service
 
 import example.com.domain.model.Money
 import example.com.domain.model.Revenue
+import example.com.domain.model.RevenueCategory
 import example.com.domain.repository.RevenueRepository
 import example.com.domain.service.RevenueService
 import example.com.presentation.route.requests.RevenueRequest
@@ -12,9 +13,17 @@ class RevenueServiceImpl(
     private val repository: RevenueRepository
 ) : RevenueService {
 
-    override suspend fun create(request: RevenueRequest, username: String) {
-        val revenue = Revenue.create(request, username)
-        repository.create(revenue)
+    override suspend fun create(requests: List<RevenueRequest>, username: String): List<Revenue> {
+        return requests.map { request ->
+            val revenue = Revenue.create(
+                revenueDate = request.revenueDate,
+                value = Money(request.value.toBigDecimal()),
+                category = request.category,
+                registeredBy = username
+            )
+            repository.create(revenue)
+            revenue
+        }
     }
 
     override suspend fun getAllRevenues(): List<Revenue> {
@@ -26,7 +35,7 @@ class RevenueServiceImpl(
         return repository.getSumOfAllRevenuesByDate(localDate)
     }
 
-    override suspend fun getSumOfRevenuesByRegistrarAndDate(date: String): RevenueSummaryByRegistrarResponse {
+    override suspend fun getSumOfRevenuesByRegistrarAndDate(date: String): Map<String, Map<RevenueCategory, Money>> {
         val localDate = LocalDate.parse(date)
         return repository.getSumOfRevenuesByRegistrarAndDate(localDate)
     }

@@ -51,7 +51,7 @@ class RevenueRepositoryImplTest {
             RevenueTable.selectAll().single()
         }
 
-        assertEquals(revenue.date, insertedRevenue[RevenueTable.date])
+        assertEquals(revenue.registrationDate, insertedRevenue[RevenueTable.registrationDate])
         assertEquals(revenue.money.amount, insertedRevenue[RevenueTable.totalCashAmount])
         assertEquals(revenue.card.amount, insertedRevenue[RevenueTable.totalCardAmount])
         assertEquals(revenue.pix.amount, insertedRevenue[RevenueTable.totalPixAmount])
@@ -68,7 +68,7 @@ class RevenueRepositoryImplTest {
         val revenue2 = createTestRevenue(2)
         transaction {
             RevenueTable.insert {
-                it[date] = revenue1.date
+                it[registrationDate] = revenue1.registrationDate
                 it[totalCashAmount] = revenue1.money.amount
                 it[totalCardAmount] = revenue1.card.amount
                 it[totalPixAmount] = revenue1.pix.amount
@@ -76,7 +76,7 @@ class RevenueRepositoryImplTest {
                 it[registeredBy] = revenue1.registeredBy
             }
             RevenueTable.insert {
-                it[date] = revenue2.date
+                it[registrationDate] = revenue2.registrationDate
                 it[totalCashAmount] = revenue2.money.amount
                 it[totalCardAmount] = revenue2.card.amount
                 it[totalPixAmount] = revenue2.pix.amount
@@ -161,7 +161,7 @@ class RevenueRepositoryImplTest {
         transaction {
             revenues.forEach { revenue ->
                 RevenueTable.insert {
-                    it[date] = revenue.date
+                    it[registrationDate] = revenue.registrationDate
                     it[totalCashAmount] = revenue.money.amount
                     it[totalCardAmount] = revenue.card.amount
                     it[totalPixAmount] = revenue.pix.amount
